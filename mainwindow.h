@@ -19,7 +19,11 @@
 #ifndef MAINWINDOW_H_INCLUDED
 #define MAINWINDOW_H_INCLUDED
 
+#include <QPushButton>
+#include <QLineEdit>
+#include <QMessageBox>
 #include <QMainWindow>
+#include "settings.h"
 
 namespace Ui {
 class MainWindow;
@@ -34,6 +38,30 @@ class MainWindow : public QMainWindow {
 
   private:
     Ui::MainWindow *ui;
+
+    Settings settings;
+
+    QPushButton *button_start_obj;
+    QPushButton *button_stop_obj;
+    QLineEdit *lineEdit_p2p_ip_obj;
+    QLineEdit *lineEdit_p2p_port_obj;
+    QLineEdit *lineEdit_p2p_ext_port_obj;
+    QLineEdit *lineEdit_rpc_ip_obj;
+    QLineEdit *lineEdit_rpc_port_obj;
+
+  private slots:
+    void button_start();
+    void button_stop();
+    void lineEdit_p2p_ip_changed(const QString &text);
+    void lineEdit_p2p_ip_finished();
+    void lineEdit_p2p_port_changed(const QString &text);
+    void lineEdit_p2p_port_finished();
+    void lineEdit_p2p_ext_port_changed(const QString &text);
+    void lineEdit_p2p_ext_port_finished();
+    void lineEdit_rpc_ip_changed(const QString &text);
+    void lineEdit_rpc_ip_finished();
+    void lineEdit_rpc_port_changed(const QString &text);
+    void lineEdit_rpc_port_finished();
 };
 
 #endif // MAINWINDOW_H_INCLUDED

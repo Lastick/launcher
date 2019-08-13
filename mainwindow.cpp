@@ -19,11 +19,124 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+
+void inputValidate(std::string &text) {
+  const char subs[] = {
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+    '.', ':', '/'};
+  std::string buff;
+  if (!text.empty()) {
+    for (unsigned int i = 0; i < text.size(); i++) {
+      for (unsigned int n = 0; n < sizeof(subs) / sizeof(char); n++) {
+        if (text[i] == subs[n]) {
+          buff.push_back(subs[n]);
+          break;
+        }
+      }
+    }
+    text.clear();
+    text = buff;
+  }
+}
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                           ui(new Ui::MainWindow) {
   ui->setupUi(this);
+
+  this->button_start_obj = this->findChild<QPushButton*>("button_start");
+  this->button_stop_obj = this->findChild<QPushButton*>("button_stop");
+  this->lineEdit_p2p_ip_obj = this->findChild<QLineEdit*>("lineEdit_p2p_ip");
+  this->lineEdit_p2p_port_obj = this->findChild<QLineEdit*>("lineEdit_p2p_port");
+  this->lineEdit_p2p_ext_port_obj = this->findChild<QLineEdit*>("lineEdit_p2p_ext_port");
+  this->lineEdit_rpc_ip_obj = this->findChild<QLineEdit*>("lineEdit_rpc_ip");
+  this->lineEdit_rpc_port_obj = this->findChild<QLineEdit*>("lineEdit_rpc_port");
+
+  connect(this->button_start_obj, SIGNAL(clicked()), this, SLOT(button_start()));
+  connect(this->button_stop_obj, SIGNAL(clicked()), this, SLOT(button_stop()));
+  connect(this->lineEdit_p2p_ip_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_p2p_ip_changed(const QString &)));
+  connect(this->lineEdit_p2p_ip_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_p2p_ip_finished()));
+  connect(this->lineEdit_p2p_port_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_p2p_port_changed(const QString &)));
+  connect(this->lineEdit_p2p_port_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_p2p_port_finished()));
+  connect(this->lineEdit_p2p_ext_port_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_p2p_ext_port_changed(const QString &)));
+  connect(this->lineEdit_p2p_ext_port_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_p2p_ext_port_finished()));
+  connect(this->lineEdit_rpc_ip_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_rpc_ip_changed(const QString &)));
+  connect(this->lineEdit_rpc_ip_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_rpc_ip_finished()));
+  connect(this->lineEdit_rpc_port_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_rpc_port_changed(const QString &)));
+  connect(this->lineEdit_rpc_port_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_rpc_port_finished()));
 }
 
 MainWindow::~MainWindow() {
     delete ui;
+}
+
+void MainWindow::button_start() {
+  QMessageBox msgBox;
+  msgBox.setWindowTitle("MessageBox Title");
+  msgBox.setText("start");
+  msgBox.exec();
+}
+
+void MainWindow::button_stop() {
+  QMessageBox msgBox;
+  msgBox.setWindowTitle("MessageBox Title");
+  msgBox.setText("stop");
+  msgBox.exec();
+}
+
+void MainWindow::lineEdit_p2p_ip_changed(const QString &text) {
+   std::string std_text = text.toStdString();
+   inputValidate(std_text);
+   this->lineEdit_p2p_ip_obj->setText(QString::fromStdString(std_text));
+}
+
+void MainWindow::lineEdit_p2p_ip_finished() {
+  //QMessageBox msgBox;
+  //msgBox.setWindowTitle("MessageBox Title");
+  //msgBox.setText("lineEdit_p2p_ip finished");
+  //msgBox.exec();
+  this->settings.config.p2p_ip = this->lineEdit_p2p_ip_obj->text().toStdString();
+}
+
+void MainWindow::lineEdit_p2p_port_changed(const QString &text) {
+  std::string std_text = text.toStdString();
+  inputValidate(std_text);
+  this->lineEdit_p2p_port_obj->setText(QString::fromStdString(std_text));
+}
+
+void MainWindow::lineEdit_p2p_port_finished() {
+  this->settings.config.p2p_port = this->lineEdit_p2p_port_obj->text().toStdString();
+}
+
+void MainWindow::lineEdit_p2p_ext_port_changed(const QString &text) {
+  std::string std_text = text.toStdString();
+  inputValidate(std_text);
+  this->lineEdit_p2p_ext_port_obj->setText(QString::fromStdString(std_text));
+}
+
+void MainWindow::lineEdit_p2p_ext_port_finished() {
+  this->settings.config.p2p_ext_port = this->lineEdit_p2p_ext_port_obj->text().toStdString();
+}
+
+void MainWindow::lineEdit_rpc_ip_changed(const QString &text) {
+  std::string std_text = text.toStdString();
+  inputValidate(std_text);
+  this->lineEdit_rpc_ip_obj->setText(QString::fromStdString(std_text));
+}
+
+void MainWindow::lineEdit_rpc_ip_finished() {
+  this->settings.config.rpc_ip = this->lineEdit_rpc_ip_obj->text().toStdString();
+}
+
+void MainWindow::lineEdit_rpc_port_changed(const QString &text) {
+  std::string std_text = text.toStdString();
+  inputValidate(std_text);
+  this->lineEdit_rpc_port_obj->setText(QString::fromStdString(std_text));
+}
+
+void MainWindow::lineEdit_rpc_port_finished() {
+  this->settings.config.rpc_port = this->lineEdit_rpc_port_obj->text().toStdString();
 }
