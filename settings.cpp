@@ -16,23 +16,19 @@
 //
 // Code formatting based on CS106B Style
 
-#ifndef SETTINGS_H_INCLUDED
-#define SETTINGS_H_INCLUDED
+#include "settings.h"
 
-#include <string>
 
-struct Config {
-  std::string p2p_ip;
-  std::string p2p_port;
-  std::string p2p_ext_port;
-  std::string rpc_ip;
-  std::string rpc_port;
-};
+const char *P2P_DEFAULT_IP = "0.0.0.0";
+const char *P2P_DEFAULT_PORT = "32347";
+const char *P2P_DEFAULT_EXT_PORT = "0";
+const char *RPC_DEFAULT_IP = "127.0.0.1";
+const char *RPC_DEFAULT_PORT = "32348";
 
-struct Settings {
-  Config config;
-};
-
-void loadConfigDefault(Config &config);
-
-#endif // SETTINGS_H
+void loadConfigDefault(Config &config) {
+  config.p2p_ip = std::string(P2P_DEFAULT_IP);
+  config.p2p_port = std::string(P2P_DEFAULT_PORT);
+  config.p2p_ext_port = std::string(P2P_DEFAULT_EXT_PORT);
+  config.rpc_ip = std::string(RPC_DEFAULT_IP);
+  config.rpc_port = std::string(RPC_DEFAULT_PORT);
+}

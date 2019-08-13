@@ -67,6 +67,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(this->lineEdit_rpc_ip_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_rpc_ip_finished()));
   connect(this->lineEdit_rpc_port_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_rpc_port_changed(const QString &)));
   connect(this->lineEdit_rpc_port_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_rpc_port_finished()));
+
+  loadConfigDefault(this->settings.config);
+
+  this->lineEdit_p2p_ip_obj->setText(QString::fromStdString(this->settings.config.p2p_ip));
+  this->lineEdit_p2p_port_obj->setText(QString::fromStdString(this->settings.config.p2p_port));
+  this->lineEdit_p2p_ext_port_obj->setText(QString::fromStdString(this->settings.config.p2p_ext_port));
+  this->lineEdit_rpc_ip_obj->setText(QString::fromStdString(this->settings.config.rpc_ip));
+  this->lineEdit_rpc_port_obj->setText(QString::fromStdString(this->settings.config.rpc_port));
 }
 
 MainWindow::~MainWindow() {
