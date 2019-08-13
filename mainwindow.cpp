@@ -78,7 +78,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 }
 
 MainWindow::~MainWindow() {
-  this->worker.stop();
+  this->worker.exit();
   delete ui;
 }
 

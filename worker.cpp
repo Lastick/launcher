@@ -16,16 +16,44 @@
 //
 // Code formatting based on CS106B Style
 
+#include <thread>
+#include <iostream>
 #include "sleep.h"
 #include "worker.h"
 
 
+void waiter(bool &flag){
+  while (flag){
+    Sleep(100);
+  }
+}
+
 Worker::Worker() {
   this->status = false;
+  this->run = true;
+  this->is_run = true;
+  this->is_stop = true;
+  std::thread th (Worker::init_loop, this);
+  th.detach();
+  waiter(this->is_run);
 }
 
 Worker::~Worker() {
+}
 
+void Worker::loop() {
+  while(this->run) {
+    this->is_run = false;
+    Sleep(1000);
+    std::cout << "ok" << std::endl;
+  }
+  this->is_stop = false;
+  std::cout << "exit" << std::endl;
+}
+
+void *Worker::init_loop(void *vptr_args) {
+  ((Worker *) vptr_args)->loop();
+  return NULL;
 }
 
 void Worker::start(const Config config) {
@@ -33,6 +61,12 @@ void Worker::start(const Config config) {
 }
 
 void Worker::stop() {
+}
+
+void Worker::exit() {
+  this->stop();
+  this->run = false;
+  waiter(this->is_stop);
 }
 
 bool Worker::getStatus() {

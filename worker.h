@@ -28,11 +28,17 @@ class Worker {
     ~Worker();
     void start(const Config config);
     void stop();
+    void exit();
     bool getStatus();
 
   private:
     Config config;
     bool status;
+    bool run;
+    bool is_run;
+    bool is_stop;
+    void loop();
+    static void *init_loop(void *vptr_args);
 
 };
 
