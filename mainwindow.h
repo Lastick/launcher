@@ -24,6 +24,7 @@
 #include <QMessageBox>
 #include <QMainWindow>
 #include "settings.h"
+#include "worker.h"
 
 namespace Ui {
 class MainWindow;
@@ -48,6 +49,8 @@ class MainWindow : public QMainWindow {
     QLineEdit *lineEdit_p2p_ext_port_obj;
     QLineEdit *lineEdit_rpc_ip_obj;
     QLineEdit *lineEdit_rpc_port_obj;
+
+    Worker worker;
 
   private slots:
     void button_start();

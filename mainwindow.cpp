@@ -78,21 +78,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 }
 
 MainWindow::~MainWindow() {
-    delete ui;
+  this->worker.stop();
+  delete ui;
 }
 
 void MainWindow::button_start() {
-  QMessageBox msgBox;
-  msgBox.setWindowTitle("MessageBox Title");
-  msgBox.setText("start");
-  msgBox.exec();
+  //QMessageBox msgBox;
+  //msgBox.setWindowTitle("MessageBox Title");
+  //msgBox.setText("start");
+  //msgBox.exec();
+  this->worker.start(this->settings.config);
 }
 
 void MainWindow::button_stop() {
-  QMessageBox msgBox;
-  msgBox.setWindowTitle("MessageBox Title");
-  msgBox.setText("stop");
-  msgBox.exec();
+  this->worker.stop();
 }
 
 void MainWindow::lineEdit_p2p_ip_changed(const QString &text) {
