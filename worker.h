@@ -19,6 +19,7 @@
 #ifndef WORKER_H_INCLUDED
 #define WORKER_H_INCLUDED
 
+#include <Windows.h>
 #include "settings.h"
 
 class Worker {
@@ -33,10 +34,12 @@ class Worker {
 
   private:
     Config config;
+    PROCESS_INFORMATION pi;
     bool status;
     bool run;
     bool is_run;
     bool is_stop;
+    std::string proc_args;
     void loop();
     static void *init_loop(void *vptr_args);
 
