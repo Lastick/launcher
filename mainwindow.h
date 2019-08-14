@@ -22,7 +22,9 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QStatusBar>
 #include <QMainWindow>
+#include <QTimer>
 #include "settings.h"
 #include "worker.h"
 
@@ -49,7 +51,9 @@ class MainWindow : public QMainWindow {
     QLineEdit *lineEdit_p2p_ext_port_obj;
     QLineEdit *lineEdit_rpc_ip_obj;
     QLineEdit *lineEdit_rpc_port_obj;
+    QStatusBar *statusbar_obj;
 
+    QTimer *timer;
     Worker worker;
 
   private slots:
@@ -65,6 +69,7 @@ class MainWindow : public QMainWindow {
     void lineEdit_rpc_ip_finished();
     void lineEdit_rpc_port_changed(const QString &text);
     void lineEdit_rpc_port_finished();
+    void gui_loop();
 };
 
 #endif // MAINWINDOW_H_INCLUDED

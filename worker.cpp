@@ -109,6 +109,7 @@ Worker::Worker() {
   this->pid = 0;
   this->pcr_n = 0;
   this->proc_args = "";
+  this->status_bar_mess = "";
   std::thread th(Worker::init_loop, this);
   th.detach();
   waiter(this->is_run);
@@ -158,7 +159,7 @@ void Worker::processor() {
         this->pcr_t = false;
         this->pcr_n = 0;
       } else {
-        std::cout << "start init ok" << std::endl;
+        this->status_bar_mess = "start init ok";
       }
     } else {
       if (IsProcExist(this->pid)) {
@@ -168,7 +169,7 @@ void Worker::processor() {
         this->proc_is_run = true;
         this->pcr_t = false;
         this->pcr_n = 0;
-        std::cout << "start success" << std::endl;
+        this->status_bar_mess = "start success";
       } else {
         this->pcr_n++;
         if (this->pcr_n >= Worker::pcr_timeout) {
@@ -194,7 +195,7 @@ void Worker::processor() {
         this->pcr_t = false;
         this->pcr_n = 0;
       } else {
-        std::cout << "stop init ok" << std::endl;
+        this->status_bar_mess = "stop init ok";
       }
     } else {
       if (!IsProcExist(this->pid)) {
@@ -204,7 +205,7 @@ void Worker::processor() {
         this->proc_is_run = false;
         this->pcr_t = false;
         this->pcr_n = 0;
-        std::cout << "stop success" << std::endl;
+        this->status_bar_mess = "stop success";
       } else {
         this->pcr_n++;
         if (this->pcr_n >= Worker::pcr_timeout) {
@@ -246,6 +247,11 @@ void Worker::exit() {
   if (!this->pcr_fail) waiter(this->proc_is_run);
   this->run = false;
   waiter(this->is_stop);
+}
+
+void Worker::getStatusbarMess(std::string &mess) {
+  mess.clear();
+  mess = this->status_bar_mess;
 }
 
 bool Worker::getStatus() {

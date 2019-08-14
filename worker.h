@@ -31,6 +31,7 @@ class Worker {
     void stop();
     void exit();
     bool getStatus();
+    void getStatusbarMess(std::string &mess);
 
   private:
     static const unsigned int pcr_timeout;
@@ -49,6 +50,7 @@ class Worker {
     int pid;
     int pcr_n;
     std::string proc_args;
+    std::string status_bar_mess;
     void loop();
     static void *init_loop(void *vptr_args);
     void processor();

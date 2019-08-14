@@ -54,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   this->lineEdit_p2p_ext_port_obj = this->findChild<QLineEdit*>("lineEdit_p2p_ext_port");
   this->lineEdit_rpc_ip_obj = this->findChild<QLineEdit*>("lineEdit_rpc_ip");
   this->lineEdit_rpc_port_obj = this->findChild<QLineEdit*>("lineEdit_rpc_port");
+  this->statusbar_obj = this->findChild<QStatusBar*>("statusbar");
 
   connect(this->button_start_obj, SIGNAL(clicked()), this, SLOT(button_start()));
   connect(this->button_stop_obj, SIGNAL(clicked()), this, SLOT(button_stop()));
@@ -75,6 +76,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   this->lineEdit_p2p_ext_port_obj->setText(QString::fromStdString(this->settings.config.p2p_ext_port));
   this->lineEdit_rpc_ip_obj->setText(QString::fromStdString(this->settings.config.rpc_ip));
   this->lineEdit_rpc_port_obj->setText(QString::fromStdString(this->settings.config.rpc_port));
+
+  this->timer = new QTimer();
+  connect(timer, SIGNAL(timeout()), this, SLOT(gui_loop()));
+  timer->start(500);
 }
 
 MainWindow::~MainWindow() {
@@ -145,4 +150,10 @@ void MainWindow::lineEdit_rpc_port_changed(const QString &text) {
 
 void MainWindow::lineEdit_rpc_port_finished() {
   this->settings.config.rpc_port = this->lineEdit_rpc_port_obj->text().toStdString();
+}
+
+void MainWindow::gui_loop() {
+  std::string mess;
+  this->worker.getStatusbarMess(mess);
+  this->statusbar_obj->showMessage(QString::fromStdString(mess));
 }
