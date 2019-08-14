@@ -26,8 +26,9 @@
 const char *name_exe = "karbowanecd";
 
 bool starter_win(const char *args,
-                 PROCESS_INFORMATION &pi) {
+                 int &pid) {
   bool res = false;
+  pid = 0;
 
   std::string exe_dir;
   std::string exe_path;
@@ -36,6 +37,7 @@ bool starter_win(const char *args,
   exe_path = exe_dir + std::string("/") + std::string(name_exe) + std::string(".exe");
 
   STARTUPINFOA si;
+  PROCESS_INFORMATION pi;
 
   ZeroMemory(&si, sizeof(si));
   si.cb = sizeof(si);
@@ -57,13 +59,15 @@ bool starter_win(const char *args,
   CloseHandle(pi.hProcess);
   CloseHandle(pi.hThread);
 
+  if (res) pid = (int) pi.dwProcessId;
+
   return res;
 }
 
-bool stoper_win(PROCESS_INFORMATION &pi) {
+bool stoper_win(const int pid) {
   bool res = false;
 
-  if (AttachConsole(pi.dwProcessId) != FALSE) {
+  if (AttachConsole((DWORD) pid) != FALSE) {
     SetConsoleCtrlHandler(nullptr, true);
     res = GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
     FreeConsole();
@@ -93,8 +97,8 @@ Worker::Worker() {
   this->run = true;
   this->is_run = true;
   this->is_stop = true;
+  this->pid = 0;
   this->proc_args = "";
-  ZeroMemory(&this->pi, sizeof(this->pi));
   std::thread th(Worker::init_loop, this);
   th.detach();
   waiter(this->is_run);
@@ -123,11 +127,12 @@ void Worker::start(const Config config) {
   this->config = config;
   genProcArgs(this->config, this->proc_args);
   std::cout << this->proc_args << std::endl;
-  starter_win(this->proc_args.c_str(), this->pi);
+  starter_win(this->proc_args.c_str(), this->pid);
+  std::cout << this->pid << std::endl;
 }
 
 void Worker::stop() {
-  stoper_win(this->pi);
+  stoper_win(this->pid);
 }
 
 void Worker::exit() {

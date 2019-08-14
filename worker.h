@@ -34,11 +34,11 @@ class Worker {
 
   private:
     Config config;
-    PROCESS_INFORMATION pi;
     bool status;
     bool run;
     bool is_run;
     bool is_stop;
+    int pid;
     std::string proc_args;
     void loop();
     static void *init_loop(void *vptr_args);
