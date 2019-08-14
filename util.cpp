@@ -56,3 +56,17 @@ bool GetExePath(std::string &path) {
 #endif
   return res;
 }
+
+bool IsProcExist(const int pid) {
+  bool res = false;
+
+  HANDLE h = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+                         FALSE,
+                         (DWORD) pid);
+  if (h != NULL) {
+    res = true;
+    CloseHandle(h);
+  }
+
+  return res;
+}
