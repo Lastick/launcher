@@ -64,12 +64,12 @@ bool starter_win(const char *args,
   return res;
 }
 
-bool stoper_win(const int pid) {
+bool stopper_win(const int pid) {
   bool res = false;
 
   if (AttachConsole((DWORD) pid) != FALSE) {
     SetConsoleCtrlHandler(nullptr, true);
-    res = GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+    if (GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0) != NULL) res = true;
     FreeConsole();
   }
 
@@ -92,12 +92,22 @@ void waiter(bool &flag){
   }
 }
 
+const unsigned int Worker::pcr_timeout = 10;
+const unsigned int Worker::loop_interval = 1000;
+
 Worker::Worker() {
   this->status = false;
   this->run = true;
   this->is_run = true;
   this->is_stop = true;
+  this->be_start = false;
+  this->be_stop = false;
+  this->be_lock = false;
+  this->proc_is_run = false;
+  this->pcr_t = false;
+  this->pcr_fail = false;
   this->pid = 0;
+  this->pcr_n = 0;
   this->proc_args = "";
   std::thread th(Worker::init_loop, this);
   th.detach();
@@ -111,8 +121,8 @@ Worker::~Worker() {
 void Worker::loop() {
   while(this->run) {
     this->is_run = false;
-    Sleep(1000);
-    std::cout << "ok" << std::endl;
+    this->processor();
+    Sleep(Worker::loop_interval);
   }
   this->is_stop = false;
   std::cout << "exit" << std::endl;
@@ -123,20 +133,117 @@ void *Worker::init_loop(void *vptr_args) {
   return NULL;
 }
 
+void Worker::processor() {
+
+  if (this->be_lock && !this->pcr_t) {
+    if (this->be_start && this->proc_is_run) {
+      this->be_start = false;
+      this->be_lock = false;
+    }
+    if (this->be_stop && !this->proc_is_run) {
+      this->be_stop = false;
+      this->be_lock = false;
+    }
+  }
+
+  if (this->be_start && !this->proc_is_run) {
+    if (!this->pcr_t) {
+      this->pcr_t = true;
+      genProcArgs(this->config, this->proc_args);
+      if (!starter_win(this->proc_args.c_str(), this->pid)) {
+        this->pcr_fail = true;
+        this->be_start = false;
+        this->be_lock = false;
+        this->proc_is_run = false;
+        this->pcr_t = false;
+        this->pcr_n = 0;
+      } else {
+        std::cout << "start init ok" << std::endl;
+      }
+    } else {
+      if (IsProcExist(this->pid)) {
+        this->pcr_fail = false;
+        this->be_start = false;
+        this->be_lock = false;
+        this->proc_is_run = true;
+        this->pcr_t = false;
+        this->pcr_n = 0;
+        std::cout << "start success" << std::endl;
+      } else {
+        this->pcr_n++;
+        if (this->pcr_n >= Worker::pcr_timeout) {
+          this->pcr_fail = true;
+          this->be_start = false;
+          this->be_lock = false;
+          this->proc_is_run = false;
+          this->pcr_t = false;
+          this->pcr_n = 0;
+        }
+      }
+    }
+  }
+
+  if (this->be_stop && this->proc_is_run) {
+    if (!this->pcr_t) {
+      this->pcr_t = true;
+      if (!stopper_win(this->pid)) {
+        this->pcr_fail = true;
+        this->be_stop = false;
+        this->be_lock = false;
+        this->proc_is_run = true;
+        this->pcr_t = false;
+        this->pcr_n = 0;
+      } else {
+        std::cout << "stop init ok" << std::endl;
+      }
+    } else {
+      if (!IsProcExist(this->pid)) {
+        this->pcr_fail = false;
+        this->be_stop = false;
+        this->be_lock = false;
+        this->proc_is_run = false;
+        this->pcr_t = false;
+        this->pcr_n = 0;
+        std::cout << "stop success" << std::endl;
+      } else {
+        this->pcr_n++;
+        if (this->pcr_n >= Worker::pcr_timeout) {
+          this->pcr_fail = true;
+          this->be_stop = false;
+          this->be_lock = false;
+          this->proc_is_run = true;
+          this->pcr_t = false;
+          this->pcr_n = 0;
+        }
+      }
+    }
+  }
+
+  if (!this->pcr_t && this->proc_is_run) {
+    this->proc_is_run = IsProcExist(this->pid);
+  }
+
+}
+
 void Worker::start(const Config config) {
   this->config = config;
-  genProcArgs(this->config, this->proc_args);
-  std::cout << this->proc_args << std::endl;
-  starter_win(this->proc_args.c_str(), this->pid);
-  std::cout << this->pid << std::endl;
+  if (!this->be_lock && !this->pcr_t) {
+    this->be_start = true;
+    this->be_lock = true;
+  }
 }
 
 void Worker::stop() {
-  stoper_win(this->pid);
+  if (!this->be_lock && !this->pcr_t) {
+    this->be_stop = true;
+    this->be_lock = true;
+  }
 }
 
 void Worker::exit() {
   this->stop();
+  // TODO maybe it's not optimal
+  if (!this->pcr_fail) waiter(this->proc_is_run);
   this->run = false;
   waiter(this->is_stop);
 }

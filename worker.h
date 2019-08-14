@@ -33,15 +33,25 @@ class Worker {
     bool getStatus();
 
   private:
+    static const unsigned int pcr_timeout;
+    static const unsigned int loop_interval;
     Config config;
     bool status;
     bool run;
     bool is_run;
     bool is_stop;
+    bool be_start;
+    bool be_stop;
+    bool be_lock;
+    bool proc_is_run;
+    bool pcr_t;
+    bool pcr_fail = false;
     int pid;
+    int pcr_n;
     std::string proc_args;
     void loop();
     static void *init_loop(void *vptr_args);
+    void processor();
 
 };
 
