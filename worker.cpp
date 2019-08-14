@@ -158,11 +158,12 @@ void Worker::processor() {
         this->proc_is_run = false;
         this->pcr_t = false;
         this->pcr_n = 0;
+        this->status_bar_mess = "start error";
       } else {
         this->status_bar_mess = "start init ok";
       }
     } else {
-      if (IsProcExist(this->pid)) {
+      if (IsProcExist(this->pid, name_exe)) {
         this->pcr_fail = false;
         this->be_start = false;
         this->be_lock = false;
@@ -179,6 +180,7 @@ void Worker::processor() {
           this->proc_is_run = false;
           this->pcr_t = false;
           this->pcr_n = 0;
+          this->status_bar_mess = "start failure";
         }
       }
     }
@@ -194,11 +196,12 @@ void Worker::processor() {
         this->proc_is_run = true;
         this->pcr_t = false;
         this->pcr_n = 0;
+        this->status_bar_mess = "stop error";
       } else {
         this->status_bar_mess = "stop init ok";
       }
     } else {
-      if (!IsProcExist(this->pid)) {
+      if (!IsProcExist(this->pid, name_exe)) {
         this->pcr_fail = false;
         this->be_stop = false;
         this->be_lock = false;
@@ -215,13 +218,14 @@ void Worker::processor() {
           this->proc_is_run = true;
           this->pcr_t = false;
           this->pcr_n = 0;
+          this->status_bar_mess = "stop failure";
         }
       }
     }
   }
 
   if (!this->pcr_t && this->proc_is_run) {
-    this->proc_is_run = IsProcExist(this->pid);
+    this->proc_is_run = IsProcExist(this->pid, name_exe);
   }
 
 }

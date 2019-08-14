@@ -22,6 +22,6 @@
 #include <string>
 
 bool GetExePath(std::string &path);
-bool IsProcExist(const int pid);
+bool IsProcExist(const int pid, const char *pro_name);
 
 #endif // UTIL_H_INCLUDED
