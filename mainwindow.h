@@ -59,6 +59,7 @@ class MainWindow : public QMainWindow {
     Worker worker;
 
     bool lock_update;
+    std::string log_mess_last;
 
   private slots:
     void button_start();

@@ -170,10 +170,13 @@ void MainWindow::gui_loop() {
     this->lock_update = true;
     this->worker.getStatusbarMess(status_mess);
     this->worker.getLogMess(log_mess);
-    this->log_area_obj->setText(QString::fromStdString(log_mess));
+    if (this->log_mess_last.compare(log_mess) != 0) {
+      this->log_mess_last = log_mess;
+      this->log_area_obj->setText(QString::fromStdString(this->log_mess_last));
+      QScrollBar *sb = this->log_area_obj->verticalScrollBar();
+      sb->setValue(sb->maximum());
+    }
     this->statusbar_obj->showMessage(QString::fromStdString(status_mess));
-    QScrollBar *sb = this->log_area_obj->verticalScrollBar();
-    sb->setValue(sb->maximum());
     this->lock_update = false;
   }
 }
