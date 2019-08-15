@@ -81,6 +81,9 @@
        </layout>
       </widget>
       <widget class="QWidget" name="base_tab">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <attribute name="title">
         <string>Base Settings</string>
        </attribute>
