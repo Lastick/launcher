@@ -18,6 +18,7 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#include <shlobj.h>
 #else
 #include <unistd.h>
 #include <libgen.h>
@@ -25,7 +26,33 @@
 #include "util.h"
 
 
-bool GetExePath(std::string &path) {
+void toNativeSeparator(std::string &path) {
+  const char native_sep = '/';
+  const char replace_sep = '\\';
+  if (path.size() > 0) {
+    for (size_t i = 0; i < path.size(); i++) {
+      if (path[i] == replace_sep) path[i] = native_sep;
+    }
+  }
+}
+
+bool getUserDataDirectory(std::string &path) {
+  bool res = false;
+  path.clear();
+
+  char psz_path[MAX_PATH] = "";
+  if (SHGetSpecialFolderPathA(NULL, psz_path, CSIDL_APPDATA, true)) {
+    path = psz_path;
+  }
+
+  if (path.size() > 0) {
+    toNativeSeparator(path);
+    res = true;
+  }
+  return res;
+}
+
+bool getExePath(std::string &path) {
   const size_t PATH_LEN = 1024;
   bool res = false;
   path.clear();
@@ -34,9 +61,7 @@ bool GetExePath(std::string &path) {
   DWORD result = GetModuleFileNameA(nullptr, native_path, PATH_LEN);
   if (result > 0 && result != PATH_LEN) {
     path = std::string(native_path);
-    for (size_t i = 0; i < path.size(); i++){
-      if (path[i] == '\\') path[i] = '/';
-    }
+    toNativeSeparator(path);
     path = path.substr(0, path.rfind('/'));
     res = true;
   }
@@ -57,7 +82,7 @@ bool GetExePath(std::string &path) {
   return res;
 }
 
-bool IsProcExist(const int pid,
+bool isProcExist(const int pid,
                  const char *pro_name) {
   bool res = false;
 
