@@ -21,6 +21,7 @@
 
 #include <string>
 
+bool mkdirDataDir(const char *path);
 bool getUserDataDirectory(std::string &path);
 bool getExePath(std::string &path);
 bool isProcExist(const int pid, const char *pro_name);

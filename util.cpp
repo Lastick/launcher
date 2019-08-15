@@ -16,6 +16,7 @@
 //
 // Code formatting based on CS106B Style
 
+#include <QDir>
 #ifdef _WIN32
 #include <windows.h>
 #include <shlobj.h>
@@ -34,6 +35,16 @@ void toNativeSeparator(std::string &path) {
       if (path[i] == replace_sep) path[i] = native_sep;
     }
   }
+}
+
+bool mkdirDataDir(const char *path) {
+  bool res = false;
+  if (!QDir(QString(path)).exists()) {
+    if (QDir().mkdir(QString(path))) res = true;
+  } else {
+    res = true;
+  }
+  return res;
 }
 
 bool getUserDataDirectory(std::string &path) {
