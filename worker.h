@@ -32,10 +32,12 @@ class Worker {
     void exit();
     bool getStatus();
     void getStatusbarMess(std::string &mess);
+    void getLogMess(std::string &mess);
 
   private:
     static const unsigned int pcr_timeout;
     static const unsigned int loop_interval;
+    static const unsigned int log_limit;
     Settings settings;
     bool status;
     bool run;
@@ -46,11 +48,13 @@ class Worker {
     bool be_lock;
     bool proc_is_run;
     bool pcr_t;
-    bool pcr_fail = false;
+    bool pcr_fail;
+    bool log_lock_update;
     int pid;
     int pcr_n;
     std::string proc_args;
     std::string status_bar_mess;
+    std::string log_mess;
     void loop();
     static void *init_loop(void *vptr_args);
     void processor();

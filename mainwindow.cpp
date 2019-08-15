@@ -16,6 +16,7 @@
 //
 // Code formatting based on CS106B Style
 
+#include <QScrollBar>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -54,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   this->lineEdit_p2p_ext_port_obj = this->findChild<QLineEdit*>("lineEdit_p2p_ext_port");
   this->lineEdit_rpc_ip_obj = this->findChild<QLineEdit*>("lineEdit_rpc_ip");
   this->lineEdit_rpc_port_obj = this->findChild<QLineEdit*>("lineEdit_rpc_port");
+  this->log_area_obj = this->findChild<QTextBrowser*>("log_area");
   this->statusbar_obj = this->findChild<QStatusBar*>("statusbar");
 
   connect(this->button_start_obj, SIGNAL(clicked()), this, SLOT(button_start()));
@@ -82,6 +84,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   this->timer = new QTimer();
   connect(timer, SIGNAL(timeout()), this, SLOT(gui_loop()));
   timer->start(500);
+
+  this->lock_update = false;
 }
 
 MainWindow::~MainWindow() {
@@ -160,7 +164,16 @@ void MainWindow::lineEdit_rpc_port_finished() {
 }
 
 void MainWindow::gui_loop() {
-  std::string mess;
-  this->worker.getStatusbarMess(mess);
-  this->statusbar_obj->showMessage(QString::fromStdString(mess));
+  std::string status_mess;
+  std::string log_mess;
+  if (!this->lock_update) {
+    this->lock_update = true;
+    this->worker.getStatusbarMess(status_mess);
+    this->worker.getLogMess(log_mess);
+    this->log_area_obj->setText(QString::fromStdString(log_mess));
+    this->statusbar_obj->showMessage(QString::fromStdString(status_mess));
+    QScrollBar *sb = this->log_area_obj->verticalScrollBar();
+    sb->setValue(sb->maximum());
+    this->lock_update = false;
+  }
 }

@@ -22,6 +22,7 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QTextBrowser>
 #include <QStatusBar>
 #include <QMainWindow>
 #include <QTimer>
@@ -51,10 +52,13 @@ class MainWindow : public QMainWindow {
     QLineEdit *lineEdit_p2p_ext_port_obj;
     QLineEdit *lineEdit_rpc_ip_obj;
     QLineEdit *lineEdit_rpc_port_obj;
+    QTextBrowser *log_area_obj;
     QStatusBar *statusbar_obj;
 
     QTimer *timer;
     Worker worker;
+
+    bool lock_update;
 
   private slots:
     void button_start();

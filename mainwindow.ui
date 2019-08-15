@@ -360,21 +360,7 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QScrollArea" name="scrollArea">
-          <property name="widgetResizable">
-           <bool>true</bool>
-          </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>596</width>
-             <height>375</height>
-            </rect>
-           </property>
-          </widget>
-         </widget>
+         <widget class="QTextBrowser" name="log_area"/>
         </item>
        </layout>
       </widget>

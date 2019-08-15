@@ -27,6 +27,7 @@ struct Config {
   std::string p2p_ext_port;
   std::string rpc_ip;
   std::string rpc_port;
+  std::string log_path;
 };
 
 struct Settings {

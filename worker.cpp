@@ -83,6 +83,7 @@ void genProcArgs(const Config config,
   args += std::string(" --p2p-external-port " + config.p2p_ext_port);
   args += std::string(" --rpc-bind-ip \"") + config.rpc_ip + std::string("\"");
   args += std::string(" --rpc-bind-port " + config.rpc_port);
+  args += std::string(" --log-file \"") + config.log_path + std::string("\"");
 }
 
 void waiter(bool &flag){
@@ -93,6 +94,7 @@ void waiter(bool &flag){
 
 const unsigned int Worker::pcr_timeout = 10;
 const unsigned int Worker::loop_interval = 1000;
+const unsigned int Worker::log_limit = 100;
 
 Worker::Worker() {
   this->status = false;
@@ -105,6 +107,7 @@ Worker::Worker() {
   this->proc_is_run = false;
   this->pcr_t = false;
   this->pcr_fail = false;
+  this->log_lock_update = false;
   this->pid = 0;
   this->pcr_n = 0;
   this->proc_args = "";
@@ -227,10 +230,18 @@ void Worker::processor() {
     this->proc_is_run = isProcExist(this->pid, this->settings.exe_name.c_str());
   }
 
+  if (this->proc_is_run) {
+    waiter(this->log_lock_update);
+    loadLogFile(this->settings.config.log_path.c_str(),
+                Worker::log_limit,
+                this->log_mess);
+  }
+
 }
 
 void Worker::start(const Settings settings) {
   this->settings = settings;
+  this->settings.config.log_path = this->settings.data_dir + std::string("/node.log");
   if (!this->be_lock && !this->pcr_t) {
     this->be_start = true;
     this->be_lock = true;
@@ -255,6 +266,13 @@ void Worker::exit() {
 void Worker::getStatusbarMess(std::string &mess) {
   mess.clear();
   mess = this->status_bar_mess;
+}
+
+void Worker::getLogMess(std::string &mess) {
+  mess.clear();
+  this->log_lock_update = true;
+  mess = this->log_mess;
+  this->log_lock_update = false;
 }
 
 bool Worker::getStatus() {
