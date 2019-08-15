@@ -71,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
   loadSettingsDefault(this->settings);
   loadConfigDefault(this->settings.config);
+  readSettings(this->settings);
 
   this->lineEdit_p2p_ip_obj->setText(QString::fromStdString(this->settings.config.p2p_ip));
   this->lineEdit_p2p_port_obj->setText(QString::fromStdString(this->settings.config.p2p_port));
@@ -111,6 +112,7 @@ void MainWindow::lineEdit_p2p_ip_finished() {
   //msgBox.setText("lineEdit_p2p_ip finished");
   //msgBox.exec();
   this->settings.config.p2p_ip = this->lineEdit_p2p_ip_obj->text().toStdString();
+  saveSettings(this->settings);
 }
 
 void MainWindow::lineEdit_p2p_port_changed(const QString &text) {
@@ -121,6 +123,7 @@ void MainWindow::lineEdit_p2p_port_changed(const QString &text) {
 
 void MainWindow::lineEdit_p2p_port_finished() {
   this->settings.config.p2p_port = this->lineEdit_p2p_port_obj->text().toStdString();
+  saveSettings(this->settings);
 }
 
 void MainWindow::lineEdit_p2p_ext_port_changed(const QString &text) {
@@ -131,6 +134,7 @@ void MainWindow::lineEdit_p2p_ext_port_changed(const QString &text) {
 
 void MainWindow::lineEdit_p2p_ext_port_finished() {
   this->settings.config.p2p_ext_port = this->lineEdit_p2p_ext_port_obj->text().toStdString();
+  saveSettings(this->settings);
 }
 
 void MainWindow::lineEdit_rpc_ip_changed(const QString &text) {
@@ -141,6 +145,7 @@ void MainWindow::lineEdit_rpc_ip_changed(const QString &text) {
 
 void MainWindow::lineEdit_rpc_ip_finished() {
   this->settings.config.rpc_ip = this->lineEdit_rpc_ip_obj->text().toStdString();
+  saveSettings(this->settings);
 }
 
 void MainWindow::lineEdit_rpc_port_changed(const QString &text) {
@@ -151,6 +156,7 @@ void MainWindow::lineEdit_rpc_port_changed(const QString &text) {
 
 void MainWindow::lineEdit_rpc_port_finished() {
   this->settings.config.rpc_port = this->lineEdit_rpc_port_obj->text().toStdString();
+  saveSettings(this->settings);
 }
 
 void MainWindow::gui_loop() {

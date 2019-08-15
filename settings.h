@@ -37,5 +37,7 @@ struct Settings {
 
 void loadSettingsDefault(Settings &settings);
 void loadConfigDefault(Config &config);
+bool saveSettings(Settings &settings);
+bool readSettings(Settings &settings);
 
 #endif // SETTINGS_H

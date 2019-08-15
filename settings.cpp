@@ -16,11 +16,16 @@
 //
 // Code formatting based on CS106B Style
 
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include "util.h"
 #include "settings.h"
 
 
 const char *exe_name = "karbowanecd";
+const char *dir_name = "karbowanec";
+const char *cong_name = "Launcher.json";
 
 const char *P2P_DEFAULT_IP = "0.0.0.0";
 const char *P2P_DEFAULT_PORT = "32347";
@@ -40,5 +45,64 @@ void loadSettingsDefault(Settings &settings) {
   std::string user_data_dir;
   getUserDataDirectory(user_data_dir);
   settings.exe_name = exe_name;
-  settings.data_dir = user_data_dir + std::string("/") + std::string(exe_name);
+  settings.data_dir = user_data_dir + std::string("/") + std::string(dir_name);
+}
+
+bool saveSettings(Settings &settings) {
+  bool res = false;
+  QFile file;
+  QJsonObject settings_obj;
+  QJsonObject config_obj;
+
+  settings_obj.insert(QString("exe_name"), QString::fromStdString(settings.exe_name));
+  settings_obj.insert(QString("data_dir"), QString::fromStdString(settings.data_dir));
+  config_obj.insert(QString("p2p_ip"), QString::fromStdString(settings.config.p2p_ip));
+  config_obj.insert(QString("p2p_port"), QString::fromStdString(settings.config.p2p_port));
+  config_obj.insert(QString("p2p_ext_port"), QString::fromStdString(settings.config.p2p_ext_port));
+  config_obj.insert(QString("rpc_ip"), QString::fromStdString(settings.config.rpc_ip));
+  config_obj.insert(QString("rpc_port"), QString::fromStdString(settings.config.rpc_port));
+  settings_obj.insert(QString("config"), config_obj);
+
+  QJsonDocument saveDoc(settings_obj);
+
+  if (mkdirDataDir(settings.data_dir.c_str())) {
+    file.setFileName(QString::fromStdString(settings.data_dir + std::string("/") + std::string(cong_name)));
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+      file.write(saveDoc.toJson());
+      file.close();
+      res = true;
+    }
+  }
+
+  return res;
+}
+
+bool readSettings(Settings &settings) {
+  bool res = false;
+  QFile file;
+  QString json_str;
+  QJsonObject settings_obj;
+  QJsonObject config_obj;
+
+  file.setFileName(QString::fromStdString(settings.data_dir + std::string("/") + std::string(cong_name)));
+  if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    json_str = file.readAll();
+    file.close();
+
+    QJsonDocument json_obj = QJsonDocument::fromJson(json_str.toUtf8());
+    if (!json_obj.isEmpty()) {
+      settings_obj = json_obj.object();
+      config_obj = settings_obj.value(QString("config")).toObject();
+      settings.exe_name = settings_obj.value(QString("exe_name")).toString().toStdString();
+      settings.data_dir = settings_obj.value(QString("data_dir")).toString().toStdString();
+      settings.config.p2p_ip = config_obj.value(QString("p2p_ip")).toString().toStdString();
+      settings.config.p2p_port = config_obj.value(QString("p2p_port")).toString().toStdString();
+      settings.config.p2p_ext_port = config_obj.value(QString("p2p_ext_port")).toString().toStdString();
+      settings.config.rpc_ip = config_obj.value(QString("rpc_ip")).toString().toStdString();
+      settings.config.rpc_port = config_obj.value(QString("rpc_port")).toString().toStdString();
+      res = true;
+    }
+  }
+
+  return res;
 }
