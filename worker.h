@@ -27,7 +27,7 @@ class Worker {
   public:
     Worker();
     ~Worker();
-    void start(const Config config);
+    void start(const Settings settings);
     void stop();
     void exit();
     bool getStatus();
@@ -36,7 +36,7 @@ class Worker {
   private:
     static const unsigned int pcr_timeout;
     static const unsigned int loop_interval;
-    Config config;
+    Settings settings;
     bool status;
     bool run;
     bool is_run;

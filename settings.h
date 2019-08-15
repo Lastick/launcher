@@ -31,8 +31,11 @@ struct Config {
 
 struct Settings {
   Config config;
+  std::string exe_name;
+  std::string data_dir;
 };
 
+void loadSettingsDefault(Settings &settings);
 void loadConfigDefault(Config &config);
 
 #endif // SETTINGS_H

@@ -16,8 +16,11 @@
 //
 // Code formatting based on CS106B Style
 
+#include "util.h"
 #include "settings.h"
 
+
+const char *exe_name = "karbowanecd";
 
 const char *P2P_DEFAULT_IP = "0.0.0.0";
 const char *P2P_DEFAULT_PORT = "32347";
@@ -31,4 +34,11 @@ void loadConfigDefault(Config &config) {
   config.p2p_ext_port = std::string(P2P_DEFAULT_EXT_PORT);
   config.rpc_ip = std::string(RPC_DEFAULT_IP);
   config.rpc_port = std::string(RPC_DEFAULT_PORT);
+}
+
+void loadSettingsDefault(Settings &settings) {
+  std::string user_data_dir;
+  getUserDataDirectory(user_data_dir);
+  settings.exe_name = exe_name;
+  settings.data_dir = user_data_dir + std::string("/") + std::string(exe_name);
 }

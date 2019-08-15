@@ -23,9 +23,8 @@
 #include "worker.h"
 
 
-const char *name_exe = "karbowanecd";
-
-bool starter_win(const char *args,
+bool starter_win(const char *exe_name,
+                 const char *args,
                  int &pid) {
   bool res = false;
   pid = 0;
@@ -33,8 +32,8 @@ bool starter_win(const char *args,
   std::string exe_dir;
   std::string exe_path;
 
-  GetExePath(exe_dir);
-  exe_path = exe_dir + std::string("/") + std::string(name_exe) + std::string(".exe");
+  getExePath(exe_dir);
+  exe_path = exe_dir + std::string("/") + std::string(exe_name) + std::string(".exe");
 
   STARTUPINFOA si;
   PROCESS_INFORMATION pi;
@@ -150,8 +149,8 @@ void Worker::processor() {
   if (this->be_start && !this->proc_is_run) {
     if (!this->pcr_t) {
       this->pcr_t = true;
-      genProcArgs(this->config, this->proc_args);
-      if (!starter_win(this->proc_args.c_str(), this->pid)) {
+      genProcArgs(this->settings.config, this->proc_args);
+      if (!starter_win(this->settings.exe_name.c_str(), this->proc_args.c_str(), this->pid)) {
         this->pcr_fail = true;
         this->be_start = false;
         this->be_lock = false;
@@ -163,7 +162,7 @@ void Worker::processor() {
         this->status_bar_mess = "start init ok";
       }
     } else {
-      if (IsProcExist(this->pid, name_exe)) {
+      if (isProcExist(this->pid, this->settings.exe_name.c_str())) {
         this->pcr_fail = false;
         this->be_start = false;
         this->be_lock = false;
@@ -201,7 +200,7 @@ void Worker::processor() {
         this->status_bar_mess = "stop init ok";
       }
     } else {
-      if (!IsProcExist(this->pid, name_exe)) {
+      if (!isProcExist(this->pid, this->settings.exe_name.c_str())) {
         this->pcr_fail = false;
         this->be_stop = false;
         this->be_lock = false;
@@ -225,13 +224,13 @@ void Worker::processor() {
   }
 
   if (!this->pcr_t && this->proc_is_run) {
-    this->proc_is_run = IsProcExist(this->pid, name_exe);
+    this->proc_is_run = isProcExist(this->pid, this->settings.exe_name.c_str());
   }
 
 }
 
-void Worker::start(const Config config) {
-  this->config = config;
+void Worker::start(const Settings settings) {
+  this->settings = settings;
   if (!this->be_lock && !this->pcr_t) {
     this->be_start = true;
     this->be_lock = true;

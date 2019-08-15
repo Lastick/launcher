@@ -69,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(this->lineEdit_rpc_port_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_rpc_port_changed(const QString &)));
   connect(this->lineEdit_rpc_port_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_rpc_port_finished()));
 
+  loadSettingsDefault(this->settings);
   loadConfigDefault(this->settings.config);
 
   this->lineEdit_p2p_ip_obj->setText(QString::fromStdString(this->settings.config.p2p_ip));
@@ -91,7 +92,7 @@ void MainWindow::button_start() {
   //msgBox.setWindowTitle("MessageBox Title");
   //msgBox.setText("start");
   //msgBox.exec();
-  this->worker.start(this->settings.config);
+  this->worker.start(this->settings);
 }
 
 void MainWindow::button_stop() {
