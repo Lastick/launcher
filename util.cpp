@@ -16,8 +16,8 @@
 //
 // Code formatting based on CS106B Style
 
-#include <QDir>
 #include <QFile>
+#include <QDir>
 #ifdef _WIN32
 #include <windows.h>
 #include <shlobj.h>
@@ -42,28 +42,30 @@ bool loadLogFile(const char *path,
                  const unsigned int limit_read,
                  std::string &log) {
   bool res = false;
-  log.clear();
-  QFile file;
   std::string log_buff;
+  QFile file;
+  qint64 file_size = 0;
   unsigned int line_n = 0;
-  unsigned int line_volume = 0;
   file.setFileName(QString(path));
   if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    log_buff = QString(file.readAll()).toStdString();
-    file.close();
-    for (size_t i = 0; i < log_buff.size(); i++) {
-      if (log_buff[i] == 0x0A) line_n++;
-    }
-    line_volume = line_n;
-    line_n = 0;
-    for (size_t i = 0; i < log_buff.size(); i++) {
-      if (log_buff[i] == 0x0A) line_n++;
-      if (limit_read > line_volume || line_volume - limit_read < line_n) {
-        log.push_back(log_buff[i]);
+    file_size = file.size();
+    if (file_size > 0) {
+      file.seek(file_size - 1);
+      while (line_n <= limit_read) {
+        if (!file.seek(file.pos() - 3)) break;
+        if (file.read(1).constData()[0] == 0x0A) line_n++;
+      }
+      while (!file.atEnd()) {
+        log_buff += QString(file.readLine()).toStdString();
       }
     }
+    file.close();
   }
-  if (log.size() > 0) res = true;
+  if (log_buff.size() > 0) {
+    log.clear();
+    log = log_buff;
+    res = true;
+  }
   return res;
 }
 
