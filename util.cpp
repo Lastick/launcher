@@ -132,17 +132,18 @@ bool isProcExist(const int pid,
   HANDLE h = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
                          FALSE,
                          (DWORD) pid);
+  const size_t ext_size = 4;
   DWORD buff_size = 1024;
-  size_t pos_n = 0;
+  size_t pos_sep = 0;
   size_t str_len = 0;
-  char exe_path[1024];
+  char exe_path[1024] = "";
   std::string exe_path_str;
   if (h != NULL) {
     if (QueryFullProcessImageNameA (h, 0, exe_path, &buff_size)) {
       exe_path_str = exe_path;
-      pos_n = exe_path_str.rfind('\\');
+      pos_sep = exe_path_str.rfind('\\');
       str_len = exe_path_str.size();
-      exe_path_str = exe_path_str.substr(pos_n + 1, str_len - pos_n - 5);
+      exe_path_str = exe_path_str.substr(pos_sep + 1, str_len - pos_sep - ext_size - 1);
       if (exe_path_str.compare(pro_name) == 0) res = true;
     }
     CloseHandle(h);
