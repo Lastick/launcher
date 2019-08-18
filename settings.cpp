@@ -27,6 +27,7 @@ const char *exe_name = "karbowanecd";
 const char *dir_name = "karbowanec";
 const char *cong_name = "Launcher.json";
 
+const char *FEE_ADDRESS_DEFAULT = "Kdev1L9V5ow3cdKNqDpLcFFxZCqu5W2GE9xMKewsB2pUXWxcXvJaUWHcSrHuZw91eYfQFzRtGfTemReSSMN4kE445i6Etb3";
 const char *P2P_DEFAULT_IP = "0.0.0.0";
 const char *P2P_DEFAULT_PORT = "32347";
 const char *P2P_DEFAULT_EXT_PORT = "0";
@@ -39,6 +40,7 @@ void loadConfigDefault(Config &config) {
   config.p2p_ext_port = std::string(P2P_DEFAULT_EXT_PORT);
   config.rpc_ip = std::string(RPC_DEFAULT_IP);
   config.rpc_port = std::string(RPC_DEFAULT_PORT);
+  config.fee_address = std::string(FEE_ADDRESS_DEFAULT);
 }
 
 void loadSettingsDefault(Settings &settings) {
@@ -56,6 +58,7 @@ bool saveSettings(Settings &settings) {
 
   settings_obj.insert(QString("exe_name"), QString::fromStdString(settings.exe_name));
   settings_obj.insert(QString("data_dir"), QString::fromStdString(settings.data_dir));
+  config_obj.insert(QString("fee_address"), QString::fromStdString(settings.config.fee_address));
   config_obj.insert(QString("p2p_ip"), QString::fromStdString(settings.config.p2p_ip));
   config_obj.insert(QString("p2p_port"), QString::fromStdString(settings.config.p2p_port));
   config_obj.insert(QString("p2p_ext_port"), QString::fromStdString(settings.config.p2p_ext_port));
@@ -95,6 +98,7 @@ bool readSettings(Settings &settings) {
       config_obj = settings_obj.value(QString("config")).toObject();
       settings.exe_name = settings_obj.value(QString("exe_name")).toString().toStdString();
       settings.data_dir = settings_obj.value(QString("data_dir")).toString().toStdString();
+      settings.config.fee_address = config_obj.value(QString("fee_address")).toString().toStdString();
       settings.config.p2p_ip = config_obj.value(QString("p2p_ip")).toString().toStdString();
       settings.config.p2p_port = config_obj.value(QString("p2p_port")).toString().toStdString();
       settings.config.p2p_ext_port = config_obj.value(QString("p2p_ext_port")).toString().toStdString();

@@ -28,6 +28,7 @@ struct Config {
   std::string rpc_ip;
   std::string rpc_port;
   std::string log_path;
+  std::string fee_address;
 };
 
 struct Settings {

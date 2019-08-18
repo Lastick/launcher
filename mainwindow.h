@@ -47,6 +47,9 @@ class MainWindow : public QMainWindow {
 
     QPushButton *button_start_obj;
     QPushButton *button_stop_obj;
+    QPushButton *button_data_dir_obj;
+    QLineEdit *lineEdit_data_dir_obj;
+    QLineEdit *lineEdit_fee_address_obj;
     QLineEdit *lineEdit_p2p_ip_obj;
     QLineEdit *lineEdit_p2p_port_obj;
     QLineEdit *lineEdit_p2p_ext_port_obj;
@@ -64,6 +67,11 @@ class MainWindow : public QMainWindow {
   private slots:
     void button_start();
     void button_stop();
+    void button_data_dir();
+    void lineEdit_data_dir_changed(const QString &text);
+    void lineEdit_data_dir_finished();
+    void lineEdit_fee_address_changed(const QString &text);
+    void lineEdit_fee_address_finished();
     void lineEdit_p2p_ip_changed(const QString &text);
     void lineEdit_p2p_ip_finished();
     void lineEdit_p2p_port_changed(const QString &text);

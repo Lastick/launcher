@@ -50,6 +50,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
   this->button_start_obj = this->findChild<QPushButton*>("button_start");
   this->button_stop_obj = this->findChild<QPushButton*>("button_stop");
+  this->button_data_dir_obj = this->findChild<QPushButton*>("button_data_dir");
+  this->lineEdit_data_dir_obj = this->findChild<QLineEdit*>("lineEdit_data_dir");
+  this->lineEdit_fee_address_obj = this->findChild<QLineEdit*>("lineEdit_fee_address");
   this->lineEdit_p2p_ip_obj = this->findChild<QLineEdit*>("lineEdit_p2p_ip");
   this->lineEdit_p2p_port_obj = this->findChild<QLineEdit*>("lineEdit_p2p_port");
   this->lineEdit_p2p_ext_port_obj = this->findChild<QLineEdit*>("lineEdit_p2p_ext_port");
@@ -60,6 +63,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
   connect(this->button_start_obj, SIGNAL(clicked()), this, SLOT(button_start()));
   connect(this->button_stop_obj, SIGNAL(clicked()), this, SLOT(button_stop()));
+  connect(this->button_data_dir_obj, SIGNAL(clicked()), this, SLOT(button_data_dir()));
+  connect(this->lineEdit_data_dir_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_data_dir_changed(const QString &)));
+  connect(this->lineEdit_data_dir_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_data_dir_finished()));
+  connect(this->lineEdit_fee_address_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_fee_address_changed(const QString &)));
+  connect(this->lineEdit_fee_address_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_fee_address_finished()));
   connect(this->lineEdit_p2p_ip_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_p2p_ip_changed(const QString &)));
   connect(this->lineEdit_p2p_ip_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_p2p_ip_finished()));
   connect(this->lineEdit_p2p_port_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_p2p_port_changed(const QString &)));
@@ -75,6 +83,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   loadConfigDefault(this->settings.config);
   readSettings(this->settings);
 
+  this->lineEdit_data_dir_obj->setText(QString::fromStdString(this->settings.data_dir));
+  this->lineEdit_fee_address_obj->setText(QString::fromStdString(this->settings.config.fee_address));
   this->lineEdit_p2p_ip_obj->setText(QString::fromStdString(this->settings.config.p2p_ip));
   this->lineEdit_p2p_port_obj->setText(QString::fromStdString(this->settings.config.p2p_port));
   this->lineEdit_p2p_ext_port_obj->setText(QString::fromStdString(this->settings.config.p2p_ext_port));
@@ -102,6 +112,36 @@ void MainWindow::button_start() {
 
 void MainWindow::button_stop() {
   this->worker.stop();
+}
+
+void MainWindow::button_data_dir() {
+}
+
+void MainWindow::lineEdit_data_dir_changed(const QString &text) {
+   std::string std_text = text.toStdString();
+   inputValidate(std_text);
+   this->lineEdit_data_dir_obj->setText(QString::fromStdString(std_text));
+}
+
+void MainWindow::lineEdit_data_dir_finished() {
+  //QMessageBox msgBox;
+  //msgBox.setWindowTitle("MessageBox Title");
+  //msgBox.setText("lineEdit_data_dir finished");
+  //msgBox.exec();
+  //this->settings.config.p2p_ip = this->lineEdit_p2p_ip_obj->text().toStdString();
+  //saveSettings(this->settings);
+}
+
+void MainWindow::lineEdit_fee_address_changed(const QString &text) {
+   std::string std_text = text.toStdString();
+   inputValidate(std_text);
+   this->lineEdit_fee_address_obj->setText(QString::fromStdString(std_text));
+}
+
+void MainWindow::lineEdit_fee_address_finished() {
+  // TODO need address checker
+  this->settings.config.fee_address = this->lineEdit_fee_address_obj->text().toStdString();
+  saveSettings(this->settings);
 }
 
 void MainWindow::lineEdit_p2p_ip_changed(const QString &text) {
