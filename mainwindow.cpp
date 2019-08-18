@@ -122,7 +122,8 @@ void MainWindow::button_data_dir() {
 
 void MainWindow::lineEdit_data_dir_changed(const QString &text) {
    std::string std_text = text.toStdString();
-   inputValidate(std_text);
+   // TODO: maybe path validator need anyway
+   //inputValidate(std_text);
    this->lineEdit_data_dir_obj->setText(QString::fromStdString(std_text));
 }
 
