@@ -64,6 +64,8 @@ class MainWindow : public QMainWindow {
     bool lock_update;
     std::string log_mess_last;
 
+    void save_data_dir(const char *path);
+
   private slots:
     void button_start();
     void button_stop();

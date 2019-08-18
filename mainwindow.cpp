@@ -17,6 +17,8 @@
 // Code formatting based on CS106B Style
 
 #include <QScrollBar>
+#include <QFileDialog>
+#include "util.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -103,10 +105,6 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::button_start() {
-  //QMessageBox msgBox;
-  //msgBox.setWindowTitle("MessageBox Title");
-  //msgBox.setText("start");
-  //msgBox.exec();
   this->worker.start(this->settings);
 }
 
@@ -115,6 +113,11 @@ void MainWindow::button_stop() {
 }
 
 void MainWindow::button_data_dir() {
+  QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+                                                  this->settings.data_dir.c_str(),
+                                                  QFileDialog::ShowDirsOnly |
+                                                    QFileDialog::DontResolveSymlinks);
+  save_data_dir(dir.toStdString().c_str());
 }
 
 void MainWindow::lineEdit_data_dir_changed(const QString &text) {
@@ -124,12 +127,7 @@ void MainWindow::lineEdit_data_dir_changed(const QString &text) {
 }
 
 void MainWindow::lineEdit_data_dir_finished() {
-  //QMessageBox msgBox;
-  //msgBox.setWindowTitle("MessageBox Title");
-  //msgBox.setText("lineEdit_data_dir finished");
-  //msgBox.exec();
-  //this->settings.config.p2p_ip = this->lineEdit_p2p_ip_obj->text().toStdString();
-  //saveSettings(this->settings);
+  save_data_dir(this->lineEdit_data_dir_obj->text().toStdString().c_str());
 }
 
 void MainWindow::lineEdit_fee_address_changed(const QString &text) {
@@ -145,16 +143,12 @@ void MainWindow::lineEdit_fee_address_finished() {
 }
 
 void MainWindow::lineEdit_p2p_ip_changed(const QString &text) {
-   std::string std_text = text.toStdString();
-   inputValidate(std_text);
-   this->lineEdit_p2p_ip_obj->setText(QString::fromStdString(std_text));
+  std::string std_text = text.toStdString();
+  inputValidate(std_text);
+  this->lineEdit_p2p_ip_obj->setText(QString::fromStdString(std_text));
 }
 
 void MainWindow::lineEdit_p2p_ip_finished() {
-  //QMessageBox msgBox;
-  //msgBox.setWindowTitle("MessageBox Title");
-  //msgBox.setText("lineEdit_p2p_ip finished");
-  //msgBox.exec();
   this->settings.config.p2p_ip = this->lineEdit_p2p_ip_obj->text().toStdString();
   saveSettings(this->settings);
 }
@@ -201,6 +195,22 @@ void MainWindow::lineEdit_rpc_port_changed(const QString &text) {
 void MainWindow::lineEdit_rpc_port_finished() {
   this->settings.config.rpc_port = this->lineEdit_rpc_port_obj->text().toStdString();
   saveSettings(this->settings);
+}
+
+void MainWindow::save_data_dir(const char *path) {
+  std::string path_str = path;
+  QMessageBox msgBox;
+  if (path_str.size() > 0) {
+    if (mkdirDataDir(path_str.c_str())) {
+      this->lineEdit_data_dir_obj->setText(QString::fromStdString(path_str));
+      //this->settings.data_dir = path_str;
+      //saveSettings(this->settings);
+    } else {
+      msgBox.setWindowTitle("Error!");
+      msgBox.setText("Destination dir is incorrect!");
+      msgBox.exec();
+    }
+  }
 }
 
 void MainWindow::gui_loop() {
