@@ -52,6 +52,7 @@ class Worker {
     bool log_lock_update;
     int pid;
     int pcr_n;
+    unsigned int log_last_mod;
     std::string proc_args;
     std::string status_bar_mess;
     std::string log_mess;

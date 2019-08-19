@@ -112,6 +112,7 @@ Worker::Worker() {
   this->log_lock_update = false;
   this->pid = 0;
   this->pcr_n = 0;
+  this->log_last_mod = 0;
   this->proc_args = "";
   this->status_bar_mess = "";
   std::thread th(Worker::init_loop, this);
@@ -139,6 +140,8 @@ void *Worker::init_loop(void *vptr_args) {
 }
 
 void Worker::processor() {
+
+  unsigned int local_log_last = 0;
 
   if (this->be_lock && !this->pcr_t) {
     if (this->be_start && this->proc_is_run) {
@@ -234,9 +237,15 @@ void Worker::processor() {
 
   if (this->proc_is_run) {
     waiter(this->log_lock_update);
-    loadLogFile(this->settings.config.log_path.c_str(),
-                Worker::log_limit,
-                this->log_mess);
+    if (getFileLastMod(this->settings.config.log_path.c_str(),
+                       local_log_last)) {
+      //if (local_log_last != this->log_last_mod) {
+        loadLogFile(this->settings.config.log_path.c_str(),
+                    Worker::log_limit,
+                    this->log_mess);
+          this->log_last_mod = local_log_last;
+      //}
+    }
   }
 
 }
