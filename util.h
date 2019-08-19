@@ -21,6 +21,7 @@
 
 #include <string>
 
+void convertUTF8toCP1251(std::string &text);
 bool getFileLastMod(const char *path, unsigned int &date);
 bool loadLogFile(const char *path, const unsigned int limit_read, std::string &log);
 bool mkdirDataDir(const char *path);

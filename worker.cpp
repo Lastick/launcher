@@ -77,6 +77,7 @@ bool stopper_win(const int pid) {
 
 void genProcArgs(const Config config,
                  std::string &args) {
+
   args.clear();
   args += std::string(" --data-dir \"") + config.data_dir + std::string("\"");
   args += std::string(" --p2p-bind-ip \"") + config.p2p_ip + std::string("\"");
@@ -86,6 +87,8 @@ void genProcArgs(const Config config,
   args += std::string(" --rpc-bind-port " + config.rpc_port);
   args += std::string(" --log-file \"") + config.log_path + std::string("\"");
   args += std::string(" --fee-address \"") + config.fee_address + std::string("\"");
+
+  convertUTF8toCP1251(args);
 }
 
 void waiter(bool &flag){

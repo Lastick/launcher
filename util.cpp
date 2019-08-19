@@ -40,6 +40,18 @@ void toNativeSeparator(std::string &path) {
   }
 }
 
+void convertUTF8toCP1251(std::string &text) {
+  int size;
+  size = MultiByteToWideChar(CP_UTF8, 0, text.c_str(), -1, 0, 0);
+  std::wstring wstr(size, 0);
+  MultiByteToWideChar(CP_UTF8, 0, text.c_str(), -1, &wstr[0], size);
+  int codepage = 1251;
+  size = WideCharToMultiByte(codepage, 0, &wstr[0], -1, 0, 0, 0, 0);
+  std::string str(size, 0);
+  WideCharToMultiByte(codepage, 0, &wstr[0], -1, &str[0], size, 0, 0);
+  text = str;
+}
+
 bool getFileLastMod(const char *path,
                     unsigned int &date) {
   bool res = false;
