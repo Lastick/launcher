@@ -85,6 +85,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     loadSettingsDefault(this->settings);
     loadConfigDefault(this->settings.config);
   }
+  mkdirDataDir(this->settings.config.data_dir.c_str());
 
   this->lineEdit_data_dir_obj->setText(QString::fromStdString(this->settings.config.data_dir));
   this->lineEdit_fee_address_obj->setText(QString::fromStdString(this->settings.config.fee_address));
