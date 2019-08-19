@@ -22,6 +22,7 @@
 #include <string>
 
 struct Config {
+  std::string data_dir;
   std::string p2p_ip;
   std::string p2p_port;
   std::string p2p_ext_port;
@@ -34,7 +35,6 @@ struct Config {
 struct Settings {
   Config config;
   std::string exe_name;
-  std::string data_dir;
 };
 
 void loadSettingsDefault(Settings &settings);

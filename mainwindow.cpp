@@ -81,11 +81,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(this->lineEdit_rpc_port_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_rpc_port_changed(const QString &)));
   connect(this->lineEdit_rpc_port_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_rpc_port_finished()));
 
-  loadSettingsDefault(this->settings);
-  loadConfigDefault(this->settings.config);
-  readSettings(this->settings);
+  if (!readSettings(this->settings)) {
+    loadSettingsDefault(this->settings);
+    loadConfigDefault(this->settings.config);
+  }
 
-  this->lineEdit_data_dir_obj->setText(QString::fromStdString(this->settings.data_dir));
+  this->lineEdit_data_dir_obj->setText(QString::fromStdString(this->settings.config.data_dir));
   this->lineEdit_fee_address_obj->setText(QString::fromStdString(this->settings.config.fee_address));
   this->lineEdit_p2p_ip_obj->setText(QString::fromStdString(this->settings.config.p2p_ip));
   this->lineEdit_p2p_port_obj->setText(QString::fromStdString(this->settings.config.p2p_port));
@@ -114,7 +115,7 @@ void MainWindow::button_stop() {
 
 void MainWindow::button_data_dir() {
   QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-                                                  this->settings.data_dir.c_str(),
+                                                  this->settings.config.data_dir.c_str(),
                                                   QFileDialog::ShowDirsOnly |
                                                     QFileDialog::DontResolveSymlinks);
   save_data_dir(dir.toStdString().c_str());
@@ -204,8 +205,8 @@ void MainWindow::save_data_dir(const char *path) {
   if (path_str.size() > 0) {
     if (mkdirDataDir(path_str.c_str())) {
       this->lineEdit_data_dir_obj->setText(QString::fromStdString(path_str));
-      //this->settings.data_dir = path_str;
-      //saveSettings(this->settings);
+      this->settings.config.data_dir = path_str;
+      saveSettings(this->settings);
     } else {
       msgBox.setWindowTitle("Error!");
       msgBox.setText("Destination dir is incorrect!");

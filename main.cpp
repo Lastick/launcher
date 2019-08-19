@@ -22,6 +22,10 @@
 
 int main(int argc, char *argv[]) {
 
+  QCoreApplication::setOrganizationName("Karbowanec");
+  QCoreApplication::setOrganizationDomain("karbo.io");
+  QCoreApplication::setApplicationName("Launcher");
+
   QApplication a(argc, argv);
   MainWindow w;
   w.show();
