@@ -16,8 +16,10 @@
 //
 // Code formatting based on CS106B Style
 
+#include <QFileInfo>
 #include <QFile>
 #include <QDir>
+#include <QDateTime>
 #ifdef _WIN32
 #include <windows.h>
 #include <shlobj.h>
@@ -36,6 +38,21 @@ void toNativeSeparator(std::string &path) {
       if (path[i] == replace_sep) path[i] = native_sep;
     }
   }
+}
+
+bool getFileLastMod(const char *path,
+                    unsigned int &date) {
+  bool res = false;
+  date = 0;
+  QFileInfo file_info;
+  file_info.setFile(QString(path));
+  if (file_info.exists()) {
+    QDateTime last_mod(file_info.lastModified());
+    date = (unsigned int) last_mod.toMSecsSinceEpoch() / 1000;
+    res = true;
+  }
+
+  return res;
 }
 
 bool loadLogFile(const char *path,

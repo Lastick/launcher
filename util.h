@@ -21,6 +21,7 @@
 
 #include <string>
 
+bool getFileLastMod(const char *path, unsigned int &date);
 bool loadLogFile(const char *path, const unsigned int limit_read, std::string &log);
 bool mkdirDataDir(const char *path);
 bool getUserDataDirectory(std::string &path);
