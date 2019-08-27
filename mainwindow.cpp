@@ -18,6 +18,7 @@
 
 #include <QScrollBar>
 #include <QFileDialog>
+#include <QInputDialog>
 #include "util.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -103,6 +104,11 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::button_start() {
+  bool ok;
+  QString pass = QInputDialog::getText(this, tr("Enter password for wallet"),
+                                       tr("Wallet password:"), QLineEdit::Password,
+                                       QString::fromStdString(this->settings.config.wallet_password), &ok);
+  if (ok) this->settings.config.wallet_password = pass.toStdString();
   this->worker.start(this->settings);
 }
 
