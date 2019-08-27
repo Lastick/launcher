@@ -79,14 +79,13 @@ void genProcArgs(const Config config,
                  std::string &args) {
 
   args.clear();
-  args += std::string(" --data-dir \"") + config.data_dir + std::string("\"");
-  args += std::string(" --p2p-bind-ip \"") + config.p2p_ip + std::string("\"");
-  args += std::string(" --p2p-bind-port " + config.p2p_port);
-  args += std::string(" --p2p-external-port " + config.p2p_ext_port);
+  args += std::string(" --wallet-file \"") + config.data_dir + "/" + config.wallet_name + std::string("\"");
+  args += std::string(" --password \"") + config.wallet_password + std::string("\"");
+  args += std::string(" --daemon-address \"") + config.daemon_address + std::string("\"");
+  args += std::string(" --daemon-port " + config.daemon_port);
   args += std::string(" --rpc-bind-ip \"") + config.rpc_ip + std::string("\"");
   args += std::string(" --rpc-bind-port " + config.rpc_port);
   args += std::string(" --log-file \"") + config.log_path + std::string("\"");
-  args += std::string(" --fee-address \"") + config.fee_address + std::string("\"");
 
   convertUTF8toCP1251(args);
 }
@@ -255,7 +254,7 @@ void Worker::processor() {
 
 void Worker::start(const Settings settings) {
   this->settings = settings;
-  this->settings.config.log_path = this->settings.config.data_dir + std::string("/node.log");
+  this->settings.config.log_path = this->settings.config.data_dir + std::string("/wallet.log");
   if (!this->be_lock && !this->pcr_t) {
     this->be_start = true;
     this->be_lock = true;

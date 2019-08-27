@@ -54,10 +54,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   this->button_stop_obj = this->findChild<QPushButton*>("button_stop");
   this->button_data_dir_obj = this->findChild<QPushButton*>("button_data_dir");
   this->lineEdit_data_dir_obj = this->findChild<QLineEdit*>("lineEdit_data_dir");
-  this->lineEdit_fee_address_obj = this->findChild<QLineEdit*>("lineEdit_fee_address");
-  this->lineEdit_p2p_ip_obj = this->findChild<QLineEdit*>("lineEdit_p2p_ip");
-  this->lineEdit_p2p_port_obj = this->findChild<QLineEdit*>("lineEdit_p2p_port");
-  this->lineEdit_p2p_ext_port_obj = this->findChild<QLineEdit*>("lineEdit_p2p_ext_port");
+  this->lineEdit_wallet_name_obj = this->findChild<QLineEdit*>("lineEdit_wallet_name");
+  this->lineEdit_daemon_address_obj = this->findChild<QLineEdit*>("lineEdit_daemon_address");
+  this->lineEdit_daemon_port_obj = this->findChild<QLineEdit*>("lineEdit_daemon_port");
   this->lineEdit_rpc_ip_obj = this->findChild<QLineEdit*>("lineEdit_rpc_ip");
   this->lineEdit_rpc_port_obj = this->findChild<QLineEdit*>("lineEdit_rpc_port");
   this->log_area_obj = this->findChild<QTextBrowser*>("log_area");
@@ -68,14 +67,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(this->button_data_dir_obj, SIGNAL(clicked()), this, SLOT(button_data_dir()));
   connect(this->lineEdit_data_dir_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_data_dir_changed(const QString &)));
   connect(this->lineEdit_data_dir_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_data_dir_finished()));
-  connect(this->lineEdit_fee_address_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_fee_address_changed(const QString &)));
-  connect(this->lineEdit_fee_address_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_fee_address_finished()));
-  connect(this->lineEdit_p2p_ip_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_p2p_ip_changed(const QString &)));
-  connect(this->lineEdit_p2p_ip_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_p2p_ip_finished()));
-  connect(this->lineEdit_p2p_port_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_p2p_port_changed(const QString &)));
-  connect(this->lineEdit_p2p_port_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_p2p_port_finished()));
-  connect(this->lineEdit_p2p_ext_port_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_p2p_ext_port_changed(const QString &)));
-  connect(this->lineEdit_p2p_ext_port_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_p2p_ext_port_finished()));
+  connect(this->lineEdit_wallet_name_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_wallet_name_changed(const QString &)));
+  connect(this->lineEdit_wallet_name_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_wallet_name_finished()));
+  connect(this->lineEdit_daemon_address_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_daemon_address_changed(const QString &)));
+  connect(this->lineEdit_daemon_address_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_daemon_address_finished()));
+  connect(this->lineEdit_daemon_port_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_daemon_port_changed(const QString &)));
+  connect(this->lineEdit_daemon_port_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_daemon_port_finished()));
   connect(this->lineEdit_rpc_ip_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_rpc_ip_changed(const QString &)));
   connect(this->lineEdit_rpc_ip_obj, SIGNAL(editingFinished()), this, SLOT(lineEdit_rpc_ip_finished()));
   connect(this->lineEdit_rpc_port_obj, SIGNAL(textChanged(const QString &)), this, SLOT(lineEdit_rpc_port_changed(const QString &)));
@@ -88,10 +85,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   mkdirDataDir(this->settings.config.data_dir.c_str());
 
   this->lineEdit_data_dir_obj->setText(QString::fromStdString(this->settings.config.data_dir));
-  this->lineEdit_fee_address_obj->setText(QString::fromStdString(this->settings.config.fee_address));
-  this->lineEdit_p2p_ip_obj->setText(QString::fromStdString(this->settings.config.p2p_ip));
-  this->lineEdit_p2p_port_obj->setText(QString::fromStdString(this->settings.config.p2p_port));
-  this->lineEdit_p2p_ext_port_obj->setText(QString::fromStdString(this->settings.config.p2p_ext_port));
+  this->lineEdit_wallet_name_obj->setText(QString::fromStdString(this->settings.config.wallet_name));
+  this->lineEdit_daemon_address_obj->setText(QString::fromStdString(this->settings.config.daemon_address));
+  this->lineEdit_daemon_port_obj->setText(QString::fromStdString(this->settings.config.daemon_port));
   this->lineEdit_rpc_ip_obj->setText(QString::fromStdString(this->settings.config.rpc_ip));
   this->lineEdit_rpc_port_obj->setText(QString::fromStdString(this->settings.config.rpc_port));
 
@@ -133,48 +129,37 @@ void MainWindow::lineEdit_data_dir_finished() {
   save_data_dir(this->lineEdit_data_dir_obj->text().toStdString().c_str());
 }
 
-void MainWindow::lineEdit_fee_address_changed(const QString &text) {
+void MainWindow::lineEdit_wallet_name_changed(const QString &text) {
    std::string std_text = text.toStdString();
    inputValidate(std_text);
-   this->lineEdit_fee_address_obj->setText(QString::fromStdString(std_text));
+   this->lineEdit_wallet_name_obj->setText(QString::fromStdString(std_text));
 }
 
-void MainWindow::lineEdit_fee_address_finished() {
+void MainWindow::lineEdit_wallet_name_finished() {
   // TODO need address checker
-  this->settings.config.fee_address = this->lineEdit_fee_address_obj->text().toStdString();
+  this->settings.config.wallet_name = this->lineEdit_wallet_name_obj->text().toStdString();
   saveSettings(this->settings);
 }
 
-void MainWindow::lineEdit_p2p_ip_changed(const QString &text) {
+void MainWindow::lineEdit_daemon_address_changed(const QString &text) {
   std::string std_text = text.toStdString();
   inputValidate(std_text);
-  this->lineEdit_p2p_ip_obj->setText(QString::fromStdString(std_text));
+  this->lineEdit_daemon_address_obj->setText(QString::fromStdString(std_text));
 }
 
-void MainWindow::lineEdit_p2p_ip_finished() {
-  this->settings.config.p2p_ip = this->lineEdit_p2p_ip_obj->text().toStdString();
+void MainWindow::lineEdit_daemon_address_finished() {
+  this->settings.config.daemon_address = this->lineEdit_daemon_address_obj->text().toStdString();
   saveSettings(this->settings);
 }
 
-void MainWindow::lineEdit_p2p_port_changed(const QString &text) {
+void MainWindow::lineEdit_daemon_port_changed(const QString &text) {
   std::string std_text = text.toStdString();
   inputValidate(std_text);
-  this->lineEdit_p2p_port_obj->setText(QString::fromStdString(std_text));
+  this->lineEdit_daemon_port_obj->setText(QString::fromStdString(std_text));
 }
 
-void MainWindow::lineEdit_p2p_port_finished() {
-  this->settings.config.p2p_port = this->lineEdit_p2p_port_obj->text().toStdString();
-  saveSettings(this->settings);
-}
-
-void MainWindow::lineEdit_p2p_ext_port_changed(const QString &text) {
-  std::string std_text = text.toStdString();
-  inputValidate(std_text);
-  this->lineEdit_p2p_ext_port_obj->setText(QString::fromStdString(std_text));
-}
-
-void MainWindow::lineEdit_p2p_ext_port_finished() {
-  this->settings.config.p2p_ext_port = this->lineEdit_p2p_ext_port_obj->text().toStdString();
+void MainWindow::lineEdit_daemon_port_finished() {
+  this->settings.config.daemon_port = this->lineEdit_daemon_port_obj->text().toStdString();
   saveSettings(this->settings);
 }
 

@@ -21,23 +21,21 @@
 #include "settings.h"
 
 
-const char *exe_name = "karbowanecd";
-const char *dir_name = "karbowanec";
+const char *exe_name = "simplewallet";
+const char *dir_name = "karbowallet";
 
-const char *FEE_ADDRESS_DEFAULT = "Kdev1L9V5ow3cdKNqDpLcFFxZCqu5W2GE9xMKewsB2pUXWxcXvJaUWHcSrHuZw91eYfQFzRtGfTemReSSMN4kE445i6Etb3";
-const char *P2P_DEFAULT_IP = "0.0.0.0";
-const char *P2P_DEFAULT_PORT = "32347";
-const char *P2P_DEFAULT_EXT_PORT = "0";
+const char *WALLET_NAME_DEFAULT = "Main";
+const char *DAEMON_ADDRESS_DEFAULT = "127.0.0.1";
+const char *DAEMON_PORT_DEFAULT = "32348";
 const char *RPC_DEFAULT_IP = "127.0.0.1";
-const char *RPC_DEFAULT_PORT = "32348";
+const char *RPC_DEFAULT_PORT = "15000";
 
 void loadConfigDefault(Config &config) {
-  config.p2p_ip = std::string(P2P_DEFAULT_IP);
-  config.p2p_port = std::string(P2P_DEFAULT_PORT);
-  config.p2p_ext_port = std::string(P2P_DEFAULT_EXT_PORT);
+  config.wallet_name = std::string(WALLET_NAME_DEFAULT);
+  config.daemon_address = std::string(DAEMON_ADDRESS_DEFAULT);
+  config.daemon_port = std::string(DAEMON_PORT_DEFAULT);
   config.rpc_ip = std::string(RPC_DEFAULT_IP);
   config.rpc_port = std::string(RPC_DEFAULT_PORT);
-  config.fee_address = std::string(FEE_ADDRESS_DEFAULT);
 }
 
 void loadSettingsDefault(Settings &settings) {
@@ -57,17 +55,14 @@ bool saveSettings(Settings &settings) {
   settings_store.setValue(QString(exe_name) + "/data_dir",
                           QString::fromStdString(settings.config.data_dir));
 
-  settings_store.setValue(QString(exe_name) + "/fee_address",
-                          QString::fromStdString(settings.config.fee_address));
+  settings_store.setValue(QString(exe_name) + "/wallet_name",
+                          QString::fromStdString(settings.config.wallet_name));
 
-  settings_store.setValue(QString(exe_name) + "/p2p_ip",
-                          QString::fromStdString(settings.config.p2p_ip));
+  settings_store.setValue(QString(exe_name) + "/daemon_address",
+                          QString::fromStdString(settings.config.daemon_address));
 
-  settings_store.setValue(QString(exe_name) + "/p2p_port",
-                          QString::fromStdString(settings.config.p2p_port));
-
-  settings_store.setValue(QString(exe_name) + "/p2p_ext_port",
-                          QString::fromStdString(settings.config.p2p_ext_port));
+  settings_store.setValue(QString(exe_name) + "/daemon_port",
+                          QString::fromStdString(settings.config.daemon_port));
 
   settings_store.setValue(QString(exe_name) + "/rpc_ip",
                           QString::fromStdString(settings.config.rpc_ip));
@@ -85,19 +80,17 @@ bool readSettings(Settings &settings) {
 
   if (settings_store.contains(QString(exe_name) + "/exe_name") &&
       settings_store.contains(QString(exe_name) + "/data_dir") &&
-      settings_store.contains(QString(exe_name) + "/fee_address") &&
-      settings_store.contains(QString(exe_name) + "/p2p_ip") &&
-      settings_store.contains(QString(exe_name) + "/p2p_port") &&
-      settings_store.contains(QString(exe_name) + "/p2p_ext_port") &&
+      settings_store.contains(QString(exe_name) + "/wallet_name") &&
+      settings_store.contains(QString(exe_name) + "/daemon_address") &&
+      settings_store.contains(QString(exe_name) + "/daemon_port") &&
       settings_store.contains(QString(exe_name) + "/rpc_ip") &&
       settings_store.contains(QString(exe_name) + "/rpc_port")) {
 
       settings.exe_name = settings_store.value(QString(exe_name) + "/exe_name").toString().toStdString();
       settings.config.data_dir = settings_store.value(QString(exe_name) + "/data_dir").toString().toStdString();
-      settings.config.fee_address = settings_store.value(QString(exe_name) + "/fee_address").toString().toStdString();
-      settings.config.p2p_ip = settings_store.value(QString(exe_name) + "/p2p_ip").toString().toStdString();
-      settings.config.p2p_port = settings_store.value(QString(exe_name) + "/p2p_port").toString().toStdString();
-      settings.config.p2p_ext_port = settings_store.value(QString(exe_name) + "/p2p_ext_port").toString().toStdString();
+      settings.config.wallet_name = settings_store.value(QString(exe_name) + "/wallet_name").toString().toStdString();
+      settings.config.daemon_address = settings_store.value(QString(exe_name) + "/daemon_address").toString().toStdString();
+      settings.config.daemon_port = settings_store.value(QString(exe_name) + "/daemon_port").toString().toStdString();
       settings.config.rpc_ip = settings_store.value(QString(exe_name) + "/rpc_ip").toString().toStdString();
       settings.config.rpc_port = settings_store.value(QString(exe_name) + "/rpc_port").toString().toStdString();
     res = true;

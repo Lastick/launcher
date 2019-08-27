@@ -23,13 +23,13 @@
 
 struct Config {
   std::string data_dir;
-  std::string p2p_ip;
-  std::string p2p_port;
-  std::string p2p_ext_port;
+  std::string wallet_name;
+  std::string wallet_password;
+  std::string daemon_address;
+  std::string daemon_port;
   std::string rpc_ip;
   std::string rpc_port;
   std::string log_path;
-  std::string fee_address;
 };
 
 struct Settings {
